@@ -18,7 +18,7 @@ const CATEGORIES = [
   { id: "doplnky", label: "Doplňky" },
 ];
 
-const DEALS = [
+let DEALS = [
   {
     store: "GANT.cz",
     title: "Saka a blejzry — sleva až 50 %",

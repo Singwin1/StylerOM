@@ -4,20 +4,48 @@ Statická stránka s ručně sestaveným přehledem aktuálních slev na obleče
 v old money stylu (saka, tvíd, kašmír, camel kabáty, penny loafers, hedvábné
 doplňky) z e-shopů dostupných v České republice.
 
-## Proč statická data, ne živé vyhledávání
+## Zdroje dat: ruční seznam + automatický scraper
 
-Většina českých a evropských módních e-shopů (Zoot, GANT, Answear, Massimo
-Dutti…) blokuje automatizované stahování stránek a nemá veřejné API pro
-vyhledávání produktů. Karty na stránce proto neobsahují konkrétní kus zboží
-s pevnou cenou, ale odkazují přímo na živou výprodejovou/kategorijní stránku
-obchodu — tam uživatel vidí aktuální skladovou dostupnost a cenu.
+Základ tvoří ručně kurátorský seznam v `js/data.js` (`DEALS`) — stabilní
+a vždy funkční, i kdyby scraper přestal fungovat.
+
+K němu se navíc při načtení stránky dotahuje `data/scraped-deals.json`,
+který jednou denně (6:00 UTC) generuje `scripts/scrape.js` přes GitHub
+Actions workflow (`.github/workflows/scrape.yml`). Scraper stahuje veřejně
+přístupné výprodejové stránky několika obchodů a parsuje z nich název,
+cenu a odkaz.
+
+**Křehkost scraperu:** selektory v `scripts/scrape.js` byly psány bez
+možnosti ověřit živé HTML obchodů (síťová politika vývojového prostředí
+odchozí požadavky blokovala). Po prvním běhu ve workflow zkontrolujte log
+v GitHub Actions — pokud u některého zdroje hlásí „0 položek nalezeno“,
+znamená to, že se skutečná HTML struktura liší od předpokladu a je potřeba
+selektor v `SOURCES` upravit podle reálné stránky. Scraper je navržený
+defenzivně: pokud se zdroj nepodaří stáhnout nebo vrátí 0 položek, ponechá
+poslední známá data z předchozího běhu místo jejich smazání.
+
+Většina českých a evropských módních e-shopů (Zoot, Massimo Dutti…) navíc
+blokuje automatizované stahování úplně nebo nemá veřejné API — proto karty
+u neověřených nabídek odkazují přímo na živou výprodejovou/kategorijní
+stránku obchodu, ne na konkrétní kus zboží, který může být vyprodaný.
 
 ## Struktura
 
 - `index.html` — struktura stránky
 - `css/style.css` — old money vizuální styl (krémová, jedlová zeleň, mosaz, serif)
-- `js/data.js` — pole `DEALS` s jednotlivými nabídkami a `CATEGORIES`
-- `js/app.js` — filtrování podle kategorie, fulltextové hledání, řazení
+- `js/data.js` — pole `DEALS` s ručně přidanými nabídkami a `CATEGORIES`
+- `js/app.js` — filtrování podle kategorie, fulltextové hledání, řazení; při načtení dotáhne i `data/scraped-deals.json`
+- `scripts/scrape.js` — Node scraper generující `data/scraped-deals.json`
+- `.github/workflows/scrape.yml` — denní cron, který scraper spouští a commituje výsledek
+
+## Spuštění scraperu lokálně
+
+```sh
+npm install
+npm run scrape
+```
+
+Výstup se zapíše do `data/scraped-deals.json`.
 
 ## Jak aktualizovat nabídku
 

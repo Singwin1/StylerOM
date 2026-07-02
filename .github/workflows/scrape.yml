@@ -1,0 +1,36 @@
+name: Aktualizace zlevněných kousků
+
+on:
+  schedule:
+    # denně v 6:00 UTC (8:00 SEČ)
+    - cron: "0 6 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - run: npm install
+
+      - run: npm run scrape
+
+      - name: Commit changed data
+        run: |
+          git config user.name "stylerom-bot"
+          git config user.email "actions@github.com"
+          if ! git diff --quiet -- data/scraped-deals.json; then
+            git add data/scraped-deals.json
+            git commit -m "chore: aktualizace scrapovaných nabídek"
+            git push
+          else
+            echo "Žádná změna v datech."
+          fi

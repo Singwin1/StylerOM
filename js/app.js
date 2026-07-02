@@ -92,9 +92,25 @@
     return "nabídek";
   }
 
+  async function loadScrapedDeals() {
+    try {
+      const res = await fetch("data/scraped-deals.json", { cache: "no-store" });
+      if (!res.ok) return;
+      const scraped = await res.json();
+      if (!Array.isArray(scraped) || scraped.length === 0) return;
+      DEALS = DEALS.concat(scraped);
+    } catch {
+      // Žádná scrapovaná data (např. lokální otevření souboru bez serveru) — jen se použije ruční seznam.
+    }
+  }
+
   searchInput.addEventListener("input", render);
   sortSelect.addEventListener("change", render);
 
-  buildFilterChips();
-  render();
+  (async function init() {
+    buildFilterChips();
+    render();
+    await loadScrapedDeals();
+    render();
+  })();
 })();
