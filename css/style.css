@@ -210,10 +210,9 @@ main {
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 3px;
-  padding: 24px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   box-shadow: var(--shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
@@ -227,12 +226,76 @@ main {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--brass) 0%, var(--brass-light) 100%);
-  border-radius: 3px 3px 0 0;
+  z-index: 1;
 }
 
 .card:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 6px rgba(38, 36, 29, 0.08), 0 14px 30px rgba(38, 36, 29, 0.12);
+}
+
+.card-media {
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      var(--cream-dark) 0px,
+      var(--cream-dark) 1px,
+      var(--cream) 1px,
+      var(--cream) 16px
+    );
+  border-bottom: 1px solid var(--line);
+}
+
+.monogram {
+  font-family: var(--serif);
+  font-size: 26px;
+  letter-spacing: 0.08em;
+  color: var(--brass);
+  border: 1.5px solid var(--brass-light);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+}
+
+.ribbon {
+  position: absolute;
+  top: 12px;
+  right: -34px;
+  transform: rotate(40deg);
+  background: var(--forest);
+  color: var(--cream);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  padding: 3px 40px;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 22px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.source-tag {
+  font-size: 10.5px;
+  color: #8a7c53;
+  font-style: italic;
+  font-weight: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  margin-left: 4px;
 }
 
 .card-top {

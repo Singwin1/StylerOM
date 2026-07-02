@@ -90,6 +90,54 @@ const SOURCES = [
       return items;
     },
   },
+  {
+    store: "Reserved.cz",
+    url: "https://www.reserved.com/cz/cs/damska/vsechny-produkty/vyprodej",
+    category: "kabaty",
+    parse($) {
+      const items = [];
+      $("[data-testid='product-item'], .product-item, li.product").each((_, el) => {
+        const $el = $(el);
+        const title = $el
+          .find("[data-testid='product-name'], .product-name, .name, h3")
+          .first()
+          .text()
+          .trim();
+        const link = $el.find("a").first().attr("href");
+        const original = parsePriceCZK(
+          $el.find(".price-old, .price--before, del").first().text()
+        );
+        const current = parsePriceCZK(
+          $el.find(".price-new, .price--current, .price").first().text()
+        );
+        if (!title || !link) return;
+        items.push({ title, link, original, current });
+      });
+      return items;
+    },
+  },
+  {
+    store: "Peek & Cloppenburg",
+    url: "https://www.peek-cloppenburg.cz/vyprodej/panska-moda/saka-a-obleky/",
+    category: "saka",
+    parse($) {
+      const items = [];
+      $(".product-tile, .productTile, .product-item, li.product").each((_, el) => {
+        const $el = $(el);
+        const title = $el.find(".product-name, .productTile__name, h3").first().text().trim();
+        const link = $el.find("a").first().attr("href");
+        const original = parsePriceCZK(
+          $el.find(".price-standard, .price--old, del").first().text()
+        );
+        const current = parsePriceCZK(
+          $el.find(".price-sales, .price--sale, .price").first().text()
+        );
+        if (!title || !link) return;
+        items.push({ title, link, original, current });
+      });
+      return items;
+    },
+  },
 ];
 
 function toAbsoluteUrl(base, href) {

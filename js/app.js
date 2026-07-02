@@ -29,22 +29,46 @@
     return btn;
   }
 
+  function initials(store) {
+    return store
+      .replace(/\(.*\)/g, "")
+      .trim()
+      .split(/\s+/)
+      .slice(0, 2)
+      .map((w) => w[0])
+      .join("")
+      .toUpperCase();
+  }
+
   function cardTemplate(deal) {
     const badge = deal.verified
       ? '<span class="badge verified">ověřená sleva</span>'
       : '<span class="badge unverified">aktuální nabídka</span>';
+    const ribbon = deal.discount
+      ? `<span class="ribbon">−${deal.discount}%</span>`
+      : "";
+    const sourceTag =
+      deal.source === "scraper"
+        ? '<span class="source-tag" title="Automaticky stažené scraperem">⟳ auto</span>'
+        : "";
     return `
       <article class="card">
-        <div class="card-top">
-          <span class="store-name">${escapeHtml(deal.store)}</span>
-          ${badge}
+        ${ribbon}
+        <div class="card-media">
+          <span class="monogram">${escapeHtml(initials(deal.store))}</span>
         </div>
-        <h3 class="card-title">${escapeHtml(deal.title)}</h3>
-        <p class="card-note">${escapeHtml(deal.note)}</p>
-        <span class="price-note">${escapeHtml(deal.priceNote)}</span>
-        <a class="card-cta" href="${deal.url}" target="_blank" rel="noopener noreferrer">
-          Zobrazit nabídku <span class="arrow">→</span>
-        </a>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="store-name">${escapeHtml(deal.store)} ${sourceTag}</span>
+            ${badge}
+          </div>
+          <h3 class="card-title">${escapeHtml(deal.title)}</h3>
+          <p class="card-note">${escapeHtml(deal.note)}</p>
+          <span class="price-note">${escapeHtml(deal.priceNote)}</span>
+          <a class="card-cta" href="${deal.url}" target="_blank" rel="noopener noreferrer">
+            Zobrazit nabídku <span class="arrow">→</span>
+          </a>
+        </div>
       </article>
     `;
   }
