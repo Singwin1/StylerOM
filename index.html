@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Old Money Výprodej — StylerOM</title>
+  <meta name="description" content="Ručně vybrané slevy na oblečení v old money stylu z e-shopů dostupných v Česku." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧥</text></svg>" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <header class="masthead">
+    <div class="container masthead-inner">
+      <svg class="crest" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="32" cy="32" r="30" stroke="#c9a15c" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="24" stroke="#c9a15c" stroke-width="1"/>
+        <path d="M32 16 L38 28 L52 30 L42 39 L45 53 L32 46 L19 53 L22 39 L12 30 L26 28 Z" stroke="#c9a15c" stroke-width="1.2" fill="none"/>
+      </svg>
+      <p class="eyebrow">StylerOM &middot; edice pro Českou republiku</p>
+      <h1 class="title">Slevy v duchu <em>Old Money</em></h1>
+      <p class="rule"></p>
+      <p class="subtitle">
+        Tvíd, kašmír, camel kabáty a kožené mokasíny za sníženou cenu — ručně vybraná
+        přehlídka aktuálních výprodejů z e-shopů, které doručují do Česka.
+      </p>
+    </div>
+  </header>
+
+  <div class="toolbar">
+    <div class="container">
+      <div class="toolbar-inner">
+        <div class="search-wrap">
+          <input type="text" id="searchInput" placeholder="Hledat obchod, kousek oblečení…" />
+        </div>
+        <div class="sort-wrap">
+          <select id="sortSelect">
+            <option value="discount">Řadit: nejvyšší sleva</option>
+            <option value="store">Řadit: obchod (A–Z)</option>
+            <option value="category">Řadit: kategorie</option>
+          </select>
+        </div>
+      </div>
+      <div class="filters" id="filterBar"></div>
+    </div>
+  </div>
+
+  <main class="container">
+    <p class="count-line" id="countLine"></p>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div>
+        <p class="brand">StylerOM</p>
+        <p>
+          Toto je ručně sestavený přehled, ne živě napojený vyhledávač — většina
+          českých e-shopů blokuje automatizované stahování cen a nemá veřejné API.
+          Karty proto vedou přímo na aktuální výprodejovou stránku obchodu, kde
+          uvidíte skutečnou skladovou dostupnost a cenu k dnešnímu dni.
+        </p>
+        <p class="snapshot">Snapshot ověřen ručně: <span id="footerDate"></span></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    document.getElementById("footerDate").textContent = SNAPSHOT_DATE;
+  </script>
+</body>
+</html>
