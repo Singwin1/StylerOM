@@ -36,16 +36,42 @@ stránku obchodu, ne na konkrétní kus zboží, který může být vyprodaný.
 - `js/data.js` — pole `DEALS` s ručně přidanými nabídkami a `CATEGORIES`
 - `js/app.js` — filtrování podle kategorie, fulltextové hledání, řazení; při načtení dotáhne i `data/scraped-deals.json`
 - `scripts/scrape.js` — Node scraper generující `data/scraped-deals.json`
-- `.github/workflows/scrape.yml` — denní cron, který scraper spouští a commituje výsledek
+- `scripts/scrape-codes.js` — Node scraper slevových kódů, generuje `data/discount-codes.json`
+- `.github/workflows/scrape.yml` — denní cron, který oba scrapery spouští a commituje výsledek
 
-## Spuštění scraperu lokálně
+## Spuštění scraperů lokálně
 
 ```sh
 npm install
-npm run scrape
+npm run scrape          # nabídky produktů -> data/scraped-deals.json
+npm run scrape:codes    # slevové kódy -> data/discount-codes.json
 ```
 
-Výstup se zapíše do `data/scraped-deals.json`.
+## Slevové kódy
+
+Sekce „Ověřené slevové kódy" na webu se zobrazí, jen pokud
+`data/discount-codes.json` obsahuje aspoň jednu položku — jinak zůstává
+skrytá (žádné vymyšlené/nekontrolované kódy). Kódy generuje
+`scripts/scrape-codes.js` z veřejných kupónových agregátorů (Kupon.cz,
+Slevovekupony.cz) a filtruje jen obchody, které web sleduje (GANT,
+Answear, Reserved, Peek & Cloppenburg, Zalando, Baťa…). Stejně jako
+u `scripts/scrape.js` platí, že selektory byly psané bez možnosti ověřit
+živé HTML — po prvním běhu zkontrolujte log v GitHub Actions.
+
+Kódy lze doplnit i ručně — stačí přidat objekt do `data/discount-codes.json`
+ve tvaru:
+
+```json
+{
+  "store": "GANT.cz",
+  "code": "GANT15",
+  "discount": 15,
+  "description": "15 % na celý nákup",
+  "expiry": "31. 8. 2026",
+  "url": "https://www.gant.cz",
+  "sourceSite": "ručně ověřeno"
+}
+```
 
 ## Jak aktualizovat nabídku
 

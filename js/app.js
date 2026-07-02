@@ -58,6 +58,17 @@
       deal.source === "scraper"
         ? '<span class="source-tag" title="Automaticky stažené scraperem">⟳ auto</span>'
         : "";
+    const codeBox = deal.code
+      ? `
+        <div class="code-box">
+          <div class="code-box-text">
+            <span class="code-label">Slevový kód${deal.codeExpiry ? ` · platí do ${escapeHtml(deal.codeExpiry)}` : ""}</span>
+            <span class="code-value">${escapeHtml(deal.code)}</span>
+          </div>
+          <button type="button" class="code-copy" data-code="${escapeHtml(deal.code)}">Kopírovat</button>
+        </div>
+      `
+      : "";
     return `
       <article class="card">
         ${ribbon}
@@ -72,6 +83,7 @@
           <h3 class="card-title">${escapeHtml(deal.title)}</h3>
           <p class="card-note">${escapeHtml(deal.note)}</p>
           <span class="price-note">${escapeHtml(deal.priceNote)}</span>
+          ${codeBox}
           <a class="card-cta" href="${deal.url}" target="_blank" rel="noopener noreferrer">
             Zobrazit nabídku <span class="arrow">→</span>
           </a>
@@ -127,6 +139,37 @@
     return "nabídek";
   }
 
+  function codeCardTemplate(item) {
+    return `
+      <div class="code-card">
+        <div class="code-box">
+          <div class="code-box-text">
+            <span class="code-label">${escapeHtml(item.store)}${item.expiry ? ` · platí do ${escapeHtml(item.expiry)}` : ""}</span>
+            <span class="code-value">${escapeHtml(item.code)}</span>
+          </div>
+          <button type="button" class="code-copy" data-code="${escapeHtml(item.code)}">Kopírovat</button>
+        </div>
+        <p class="code-desc">${escapeHtml(item.description || "")}</p>
+        <a class="code-source" href="${item.url}" target="_blank" rel="noopener noreferrer">zdroj: ${escapeHtml(item.sourceSite || "")}</a>
+      </div>
+    `;
+  }
+
+  async function loadDiscountCodes() {
+    const section = document.getElementById("codesSection");
+    const codesGrid = document.getElementById("codesGrid");
+    try {
+      const res = await fetch("data/discount-codes.json", { cache: "no-store" });
+      if (!res.ok) return;
+      const codes = await res.json();
+      if (!Array.isArray(codes) || codes.length === 0) return;
+      codesGrid.innerHTML = codes.map(codeCardTemplate).join("");
+      section.hidden = false;
+    } catch {
+      // Žádná data o kódech — sekce zůstane skrytá.
+    }
+  }
+
   async function loadScrapedDeals() {
     try {
       const res = await fetch("data/scraped-deals.json", { cache: "no-store" });
@@ -139,13 +182,32 @@
     }
   }
 
+  async function copyCode(code, btn) {
+    const original = btn.textContent;
+    try {
+      await navigator.clipboard.writeText(code);
+      btn.textContent = "Zkopírováno ✓";
+    } catch {
+      btn.textContent = "Nelze zkopírovat";
+    }
+    setTimeout(() => {
+      btn.textContent = original;
+    }, 1800);
+  }
+
+  grid.addEventListener("click", (e) => {
+    const btn = e.target.closest(".code-copy");
+    if (!btn) return;
+    copyCode(btn.dataset.code, btn);
+  });
+
   searchInput.addEventListener("input", render);
   sortSelect.addEventListener("change", render);
 
   (async function init() {
     buildFilterChips();
     render();
-    await loadScrapedDeals();
+    await Promise.all([loadScrapedDeals(), loadDiscountCodes()]);
     render();
   })();
 })();
