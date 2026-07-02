@@ -35,6 +35,50 @@ function discountFromPrices(original, current) {
   return Math.round((1 - current / original) * 100);
 }
 
+// Reserved.cz je hlavní sledovaný obchod — pokrýváme ho napříč více
+// kategoriemi a oběma pohlavími místo jedné stránky, aby scraper
+// zachytil co nejvíc aktuálně zlevněných kousků.
+function parseReserved($) {
+  const items = [];
+  $("[data-testid='product-item'], .product-item, li.product").each((_, el) => {
+    const $el = $(el);
+    const title = $el
+      .find("[data-testid='product-name'], .product-name, .name, h3")
+      .first()
+      .text()
+      .trim();
+    const link = $el.find("a").first().attr("href");
+    const original = parsePriceCZK($el.find(".price-old, .price--before, del").first().text());
+    const current = parsePriceCZK(
+      $el.find(".price-new, .price--current, .price").first().text()
+    );
+    if (!title || !link) return;
+    items.push({ title, link, original, current });
+  });
+  return items;
+}
+
+function reservedSources() {
+  const pages = [
+    { url: "https://www.reserved.com/cz/cs/damska/kabaty-a-bundy/vyprodej", category: "kabaty", gender: "zeny" },
+    { url: "https://www.reserved.com/cz/cs/panska/bundy-a-kabaty/vyprodej", category: "kabaty", gender: "muzi" },
+    { url: "https://www.reserved.com/cz/cs/damska/svetry/vyprodej", category: "svetry", gender: "zeny" },
+    { url: "https://www.reserved.com/cz/cs/panska/svetry-a-mikiny/vyprodej", category: "svetry", gender: "muzi" },
+    { url: "https://www.reserved.com/cz/cs/damska/saka/vyprodej", category: "saka", gender: "zeny" },
+    { url: "https://www.reserved.com/cz/cs/panska/saka-a-obleky/vyprodej", category: "saka", gender: "muzi" },
+    { url: "https://www.reserved.com/cz/cs/damska/kosile/vyprodej", category: "kosile", gender: "zeny" },
+    { url: "https://www.reserved.com/cz/cs/panska/kosile/vyprodej", category: "kosile", gender: "muzi" },
+    { url: "https://www.reserved.com/cz/cs/damska/doplnky/vyprodej", category: "doplnky", gender: "zeny" },
+  ];
+  return pages.map((p) => ({
+    store: "Reserved.cz",
+    url: p.url,
+    category: p.category,
+    gender: p.gender,
+    parse: parseReserved,
+  }));
+}
+
 const SOURCES = [
   {
     store: "GANT.cz",
@@ -93,33 +137,7 @@ const SOURCES = [
       return items;
     },
   },
-  {
-    store: "Reserved.cz",
-    url: "https://www.reserved.com/cz/cs/damska/vsechny-produkty/vyprodej",
-    category: "kabaty",
-    gender: "zeny",
-    parse($) {
-      const items = [];
-      $("[data-testid='product-item'], .product-item, li.product").each((_, el) => {
-        const $el = $(el);
-        const title = $el
-          .find("[data-testid='product-name'], .product-name, .name, h3")
-          .first()
-          .text()
-          .trim();
-        const link = $el.find("a").first().attr("href");
-        const original = parsePriceCZK(
-          $el.find(".price-old, .price--before, del").first().text()
-        );
-        const current = parsePriceCZK(
-          $el.find(".price-new, .price--current, .price").first().text()
-        );
-        if (!title || !link) return;
-        items.push({ title, link, original, current });
-      });
-      return items;
-    },
-  },
+  ...reservedSources(),
   {
     store: "Peek & Cloppenburg",
     url: "https://www.peek-cloppenburg.cz/vyprodej/panska-moda/saka-a-obleky/",

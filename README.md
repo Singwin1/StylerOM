@@ -9,6 +9,12 @@ doplňky) z e-shopů dostupných v České republice.
 Základ tvoří ručně kurátorský seznam v `js/data.js` (`DEALS`) — stabilní
 a vždy funkční, i kdyby scraper přestal fungovat.
 
+**Reserved.cz je hlavní sledovaný obchod** — je zastoupený ve všech
+kategoriích (kabáty, svetry, saka, košile, doplňky) pro muže i ženy, a to
+jak v ručním seznamu, tak v `scripts/scrape.js` (funkce `reservedSources()`
+prochází 9 kategorijních výprodejových stránek) a v `scripts/scrape-codes.js`
+(přednostní vyhledávání kódů přímo pro Reserved na kupónových agregátorech).
+
 K němu se navíc při načtení stránky dotahuje `data/scraped-deals.json`,
 který jednou denně (6:00 UTC) generuje `scripts/scrape.js` přes GitHub
 Actions workflow (`.github/workflows/scrape.yml`). Scraper stahuje veřejně

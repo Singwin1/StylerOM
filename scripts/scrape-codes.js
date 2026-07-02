@@ -56,41 +56,59 @@ function parseDiscountPercent(text) {
   return match ? parseInt(match[1], 10) : null;
 }
 
+function parseKupon($) {
+  const items = [];
+  $(".coupon, .coupon-item, .voucher-item, li.coupon-list-item").each((_, el) => {
+    const $el = $(el);
+    const store = $el.find(".shop-name, .merchant, .store-name").first().text().trim();
+    const code =
+      $el.find(".coupon-code, .code, [data-code]").first().text().trim() || $el.attr("data-code");
+    const description = $el.find(".coupon-title, .title, .description").first().text().trim();
+    const expiry = $el.find(".expiry, .valid-until, .date").first().text().trim() || null;
+    if (!store || !code) return;
+    items.push({ store, code, description, expiry });
+  });
+  return items;
+}
+
+function parseSlevovekupony($) {
+  const items = [];
+  $(".voucher, .coupon-box, li.voucher-item").each((_, el) => {
+    const $el = $(el);
+    const store = $el.find(".shop, .brand, .store").first().text().trim();
+    const code = $el.find(".code, .voucher-code").first().text().trim();
+    const description = $el.find(".headline, .title, h3").first().text().trim();
+    const expiry = $el.find(".valid, .expiry").first().text().trim() || null;
+    if (!store || !code) return;
+    items.push({ store, code, description, expiry });
+  });
+  return items;
+}
+
 const SOURCES = [
+  // Reserved je hlavní sledovaný obchod — jeho stránku na agregátoru
+  // řešíme přednostně a samostatně (přímý odkaz na značku), zbytek
+  // zdrojů níže prohledává obecné výpisy a filtruje na TRACKED_STORES.
+  {
+    name: "Kupon.cz — Reserved",
+    url: "https://www.kupon.cz/reserved",
+    parse: ($) => parseKupon($).map((item) => ({ ...item, store: item.store || "Reserved.cz" })),
+  },
+  {
+    name: "Slevovekupony.cz — Reserved",
+    url: "https://www.slevovekupony.cz/reserved",
+    parse: ($) =>
+      parseSlevovekupony($).map((item) => ({ ...item, store: item.store || "Reserved.cz" })),
+  },
   {
     name: "Kupon.cz",
     url: "https://www.kupon.cz/",
-    parse($, baseUrl) {
-      const items = [];
-      $(".coupon, .coupon-item, .voucher-item, li.coupon-list-item").each((_, el) => {
-        const $el = $(el);
-        const store = $el.find(".shop-name, .merchant, .store-name").first().text().trim();
-        const code = $el.find(".coupon-code, .code, [data-code]").first().text().trim() ||
-          $el.attr("data-code");
-        const description = $el.find(".coupon-title, .title, .description").first().text().trim();
-        const expiry = $el.find(".expiry, .valid-until, .date").first().text().trim() || null;
-        if (!store || !code) return;
-        items.push({ store, code, description, expiry });
-      });
-      return items;
-    },
+    parse: parseKupon,
   },
   {
     name: "Slevovekupony.cz",
     url: "https://www.slevovekupony.cz/",
-    parse($, baseUrl) {
-      const items = [];
-      $(".voucher, .coupon-box, li.voucher-item").each((_, el) => {
-        const $el = $(el);
-        const store = $el.find(".shop, .brand, .store").first().text().trim();
-        const code = $el.find(".code, .voucher-code").first().text().trim();
-        const description = $el.find(".headline, .title, h3").first().text().trim();
-        const expiry = $el.find(".valid, .expiry").first().text().trim() || null;
-        if (!store || !code) return;
-        items.push({ store, code, description, expiry });
-      });
-      return items;
-    },
+    parse: parseSlevovekupony,
   },
 ];
 
