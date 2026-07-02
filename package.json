@@ -1,0 +1,14 @@
+{
+  "name": "stylerom-scraper",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scraper pro aktualizaci zlevněných old-money kousků na StylerOM",
+  "type": "module",
+  "scripts": {
+    "scrape": "node scripts/scrape.js",
+    "scrape:codes": "node scripts/scrape-codes.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0"
+  }
+}

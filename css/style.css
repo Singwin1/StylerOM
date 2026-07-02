@@ -161,7 +161,23 @@ h1.title em {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding: 0 0 10px;
+}
+
+.gender-filters {
   padding: 0 0 18px;
+  border-top: 1px dashed var(--line);
+  padding-top: 12px;
+}
+
+.gender-filters .chip {
+  font-size: 12.5px;
+  padding: 5px 14px;
+}
+
+.gender-filters .chip.active {
+  background: var(--brass);
+  border-color: var(--brass);
 }
 
 .chip {
@@ -193,6 +209,59 @@ main {
   padding: 40px 0 20px;
 }
 
+.codes-section {
+  margin-bottom: 40px;
+  padding-bottom: 32px;
+  border-bottom: 1px solid var(--line);
+}
+
+.section-title {
+  font-size: 24px;
+  font-weight: 400;
+  margin: 0 0 6px;
+  color: var(--forest);
+}
+
+.section-sub {
+  font-size: 14px;
+  color: #6b6550;
+  font-style: italic;
+  margin: 0 0 20px;
+}
+
+.codes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.code-card {
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: var(--shadow);
+}
+
+.code-desc {
+  font-size: 13.5px;
+  color: #55503f;
+  margin: 0;
+}
+
+.code-source {
+  font-size: 12px;
+  color: var(--brass);
+  text-decoration: none;
+}
+
+.code-source:hover {
+  text-decoration: underline;
+}
+
 .count-line {
   color: #6b6550;
   font-size: 14px;
@@ -210,10 +279,9 @@ main {
   background: var(--paper);
   border: 1px solid var(--line);
   border-radius: 3px;
-  padding: 24px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   box-shadow: var(--shadow);
   transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
@@ -227,12 +295,76 @@ main {
   right: 0;
   height: 3px;
   background: linear-gradient(90deg, var(--brass) 0%, var(--brass-light) 100%);
-  border-radius: 3px 3px 0 0;
+  z-index: 1;
 }
 
 .card:hover {
   transform: translateY(-3px);
   box-shadow: 0 4px 6px rgba(38, 36, 29, 0.08), 0 14px 30px rgba(38, 36, 29, 0.12);
+}
+
+.card-media {
+  height: 96px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      var(--cream-dark) 0px,
+      var(--cream-dark) 1px,
+      var(--cream) 1px,
+      var(--cream) 16px
+    );
+  border-bottom: 1px solid var(--line);
+}
+
+.monogram {
+  font-family: var(--serif);
+  font-size: 26px;
+  letter-spacing: 0.08em;
+  color: var(--brass);
+  border: 1.5px solid var(--brass-light);
+  border-radius: 50%;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper);
+}
+
+.ribbon {
+  position: absolute;
+  top: 12px;
+  right: -34px;
+  transform: rotate(40deg);
+  background: var(--forest);
+  color: var(--cream);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 0.03em;
+  padding: 3px 40px;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.card-body {
+  padding: 22px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex-grow: 1;
+}
+
+.source-tag {
+  font-size: 10.5px;
+  color: #8a7c53;
+  font-style: italic;
+  font-weight: normal;
+  letter-spacing: normal;
+  text-transform: none;
+  margin-left: 4px;
 }
 
 .card-top {
@@ -290,6 +422,57 @@ main {
   color: var(--forest-light);
   font-weight: bold;
   font-style: italic;
+}
+
+.code-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: var(--cream-dark);
+  border: 1px dashed var(--brass);
+  border-radius: 2px;
+  padding: 8px 12px;
+}
+
+.code-box-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: hidden;
+}
+
+.code-label {
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #8a7c53;
+}
+
+.code-value {
+  font-family: "Courier New", monospace;
+  font-weight: bold;
+  font-size: 15px;
+  color: var(--forest);
+  letter-spacing: 0.04em;
+}
+
+.code-copy {
+  flex-shrink: 0;
+  border: 1px solid var(--brass);
+  background: var(--paper);
+  color: var(--brass);
+  font-family: var(--serif);
+  font-size: 12.5px;
+  padding: 6px 12px;
+  border-radius: 2px;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.code-copy:hover {
+  background: var(--brass);
+  color: var(--cream);
 }
 
 .card-cta {
