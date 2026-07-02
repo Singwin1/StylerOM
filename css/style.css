@@ -161,7 +161,23 @@ h1.title em {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  padding: 0 0 10px;
+}
+
+.gender-filters {
   padding: 0 0 18px;
+  border-top: 1px dashed var(--line);
+  padding-top: 12px;
+}
+
+.gender-filters .chip {
+  font-size: 12.5px;
+  padding: 5px 14px;
+}
+
+.gender-filters .chip.active {
+  background: var(--brass);
+  border-color: var(--brass);
 }
 
 .chip {

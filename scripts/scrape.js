@@ -40,6 +40,7 @@ const SOURCES = [
     store: "GANT.cz",
     url: "https://www.gant.cz/damska-saka-a-blazery-2/f/sleva-50",
     category: "saka",
+    gender: "zeny",
     parse($) {
       const items = [];
       $(".product-tile, .product-item, li.product").each((_, el) => {
@@ -58,6 +59,7 @@ const SOURCES = [
     store: "Answear.cz",
     url: "https://answear.cz/vyprodej",
     category: "svetry",
+    gender: "unisex",
     parse($) {
       const items = [];
       $("[data-testid='product-card'], .product-card, .product-box").each((_, el) => {
@@ -76,6 +78,7 @@ const SOURCES = [
     store: "Baťa.cz",
     url: "https://www.bata.cz/vyprodej/",
     category: "boty",
+    gender: "unisex",
     parse($) {
       const items = [];
       $(".product-tile, .product, li.item").each((_, el) => {
@@ -94,6 +97,7 @@ const SOURCES = [
     store: "Reserved.cz",
     url: "https://www.reserved.com/cz/cs/damska/vsechny-produkty/vyprodej",
     category: "kabaty",
+    gender: "zeny",
     parse($) {
       const items = [];
       $("[data-testid='product-item'], .product-item, li.product").each((_, el) => {
@@ -120,6 +124,7 @@ const SOURCES = [
     store: "Peek & Cloppenburg",
     url: "https://www.peek-cloppenburg.cz/vyprodej/panska-moda/saka-a-obleky/",
     category: "saka",
+    gender: "muzi",
     parse($) {
       const items = [];
       $(".product-tile, .productTile, .product-item, li.product").each((_, el) => {
@@ -169,6 +174,7 @@ async function scrapeSource(source) {
           ? `Aktuálně ${item.current} Kč (z ${item.original} Kč).`
           : "Automaticky nalezená položka ve výprodejové sekci.",
         category: source.category,
+        gender: source.gender || "unisex",
         discount,
         priceNote: item.current
           ? `${item.current} Kč${item.original ? ` (z ${item.original} Kč)` : ""}`

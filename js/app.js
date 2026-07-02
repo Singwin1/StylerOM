@@ -4,25 +4,32 @@
   const searchInput = document.getElementById("searchInput");
   const sortSelect = document.getElementById("sortSelect");
   const filterBar = document.getElementById("filterBar");
+  const genderBar = document.getElementById("genderBar");
 
   let activeCategory = "all";
+  let activeGender = "all";
 
   function buildFilterChips() {
-    const allChip = makeChip("all", "Vše");
-    filterBar.appendChild(allChip);
+    filterBar.appendChild(makeChip(filterBar, "activeCategory", "all", "Vše"));
     CATEGORIES.forEach((cat) => {
-      filterBar.appendChild(makeChip(cat.id, cat.label));
+      filterBar.appendChild(makeChip(filterBar, "activeCategory", cat.id, cat.label));
+    });
+
+    genderBar.appendChild(makeChip(genderBar, "activeGender", "all", "Muži i ženy"));
+    GENDERS.forEach((g) => {
+      genderBar.appendChild(makeChip(genderBar, "activeGender", g.id, g.label));
     });
   }
 
-  function makeChip(id, label) {
+  function makeChip(bar, stateKey, id, label) {
     const btn = document.createElement("button");
     btn.className = "chip" + (id === "all" ? " active" : "");
     btn.textContent = label;
     btn.dataset.id = id;
     btn.addEventListener("click", () => {
-      activeCategory = id;
-      [...filterBar.children].forEach((c) => c.classList.remove("active"));
+      if (stateKey === "activeCategory") activeCategory = id;
+      else activeGender = id;
+      [...bar.children].forEach((c) => c.classList.remove("active"));
       btn.classList.add("active");
       render();
     });
@@ -83,12 +90,16 @@
     const query = searchInput.value.trim().toLowerCase();
     let list = DEALS.filter((d) => {
       const matchesCategory = activeCategory === "all" || d.category === activeCategory;
+      const matchesGender =
+        activeGender === "all" ||
+        d.gender === activeGender ||
+        (activeGender !== "unisex" && d.gender === "unisex");
       const matchesQuery =
         !query ||
         d.store.toLowerCase().includes(query) ||
         d.title.toLowerCase().includes(query) ||
         d.note.toLowerCase().includes(query);
-      return matchesCategory && matchesQuery;
+      return matchesCategory && matchesGender && matchesQuery;
     });
 
     const sortBy = sortSelect.value;
@@ -122,7 +133,7 @@
       if (!res.ok) return;
       const scraped = await res.json();
       if (!Array.isArray(scraped) || scraped.length === 0) return;
-      DEALS = DEALS.concat(scraped);
+      DEALS = DEALS.concat(scraped.map((d) => ({ gender: "unisex", ...d })));
     } catch {
       // Žádná scrapovaná data (např. lokální otevření souboru bez serveru) — jen se použije ruční seznam.
     }
